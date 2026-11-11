@@ -1,0 +1,510 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#2446c7">
+<title>Maratona ENEM 790</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22%3E%3Ctext y=%22.9em%22 font-size=%2290%22%3E%F0%9F%94%A5%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: app de uma coluna no celular; topo com perfil e fogo, abas embaixo do topo, conteúdo rolando. Folha de respostas do ENEM como motivo (bolhas A–E). */
+:root{
+  --bg:#f3f5f9; --surface:#ffffff; --surface-2:#e9edf4; --line:#d5dbe6;
+  --ink:#141b2b; --muted:#5d6779; --ink-blue:#2446c7; --ink-blue-soft:#dfe5fb;
+  --fire:#f05a1a; --fire-soft:#ffe4d6; --ok:#13865a; --ok-soft:#d6f1e4; --bad:#c9364a; --bad-soft:#fadbe0;
+  --gold:#b98a10;
+  --display:"Bricolage Grotesque", "Avenir Next", system-ui, sans-serif;
+  --body:"Manrope", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, Menlo, monospace;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1320; --surface:#161d2e; --surface-2:#1f2840; --line:#2c3652;
+  --ink:#eef1f8; --muted:#9aa4ba; --ink-blue:#8ea6ff; --ink-blue-soft:#24305a;
+  --fire:#ff7a3d; --fire-soft:#3d2216; --ok:#3fcf8e; --ok-soft:#173a2b; --bad:#ff6b81; --bad-soft:#3f1d26; --gold:#e5b93e; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0e1320; --surface:#161d2e; --surface-2:#1f2840; --line:#2c3652;
+  --ink:#eef1f8; --muted:#9aa4ba; --ink-blue:#8ea6ff; --ink-blue-soft:#24305a;
+  --fire:#ff7a3d; --fire-soft:#3d2216; --ok:#3fcf8e; --ok-soft:#173a2b; --bad:#ff6b81; --bad-soft:#3f1d26; --gold:#e5b93e; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;margin:0}
+.wrap{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:14px 60px}
+h1,h2,h3{font-family:var(--display);margin:0;text-wrap:balance;letter-spacing:-.01em}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:2px solid var(--ink-blue);outline-offset:2px}
+.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}
+.eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:700}
+.flame{width:1em;height:1em;vertical-align:-.12em}
+.av{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-family:var(--display);font-weight:800;color:#fff;flex:none;font-size:16px}
+.av.sm{width:22px;height:22px;font-size:11px}
+.av.lg{width:64px;height:64px;font-size:26px}
+.notice{background:var(--fire-soft);border:1px solid var(--fire);border-radius:var(--r);padding:12px 14px;margin-bottom:14px;font-size:14px}
+.notice b{font-weight:700}
+
+/* login */
+.hero{display:grid;gap:6px;margin:10px 0 20px}
+.hero h1{font-size:clamp(30px,7vw,46px);font-weight:800;line-height:1.02}
+.hero h1 em{font-style:normal;color:var(--fire)}
+.count{display:inline-flex;gap:8px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:13px;width:fit-content}
+.pick{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px}
+.who{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:grid;gap:8px;justify-items:start;text-align:left}
+.who:hover{border-color:var(--ink-blue)}
+.who .nm{font-family:var(--display);font-weight:700;font-size:19px}
+.who .meta{font-size:12px;color:var(--muted)}
+.pinbox{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:14px;justify-items:center;max-width:380px;margin:0 auto;text-align:center}
+.pin{display:flex;gap:10px}
+.pin input{width:52px;height:60px;text-align:center;font-family:var(--mono);font-size:26px;border:1.5px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink)}
+.btn{background:var(--ink-blue);color:#fff;border:0;border-radius:12px;padding:12px 18px;font-weight:700}
+.btn.ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.err{color:var(--bad);font-size:13px;min-height:1.2em}
+
+/* topo */
+.top{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px}
+.top .nm{font-family:var(--display);font-weight:800;font-size:20px;line-height:1.1}
+.lvl{font-size:12px;color:var(--muted)}
+.bar{height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin-top:6px}
+.bar>i{display:block;height:100%;background:var(--ink-blue);border-radius:99px}
+.streak{display:grid;justify-items:center;gap:0;min-width:64px;padding:6px 8px;border-radius:12px}
+.streak b{font-family:var(--display);font-size:26px;line-height:1}
+.streak small{font-size:10px;letter-spacing:.06em;text-transform:uppercase;font-weight:700}
+.streak.on{background:var(--fire-soft);color:var(--fire)}
+.streak.risk{background:var(--surface-2);color:var(--fire)}
+.streak.off{background:var(--surface-2);color:var(--muted)}
+.today{display:flex;gap:12px;align-items:center;margin-top:10px;font-size:13px;flex-wrap:wrap}
+.today .bar{flex:1;min-width:140px;margin:0}
+.today .bar>i{background:var(--fire)}
+.tabs{display:flex;gap:4px;margin:14px 0 12px;background:var(--surface-2);padding:4px;border-radius:12px;position:sticky;top:env(safe-area-inset-top,0px);z-index:5}
+.tabs button{flex:1;border:0;background:transparent;padding:9px 6px;border-radius:9px;font-weight:700;font-size:14px;color:var(--muted)}
+.tabs button[aria-selected="true"]{background:var(--surface);color:var(--ink);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+
+/* grade */
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:6px 11px;font-size:13px;font-weight:600}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.sec{margin:16px 0 8px;display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.sec h3{font-size:16px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(52px,1fr));gap:6px}
+.cell{position:relative;aspect-ratio:1;border:1px solid var(--line);background:var(--surface);border-radius:10px;display:grid;place-items:center;font-family:var(--mono);font-weight:700;font-size:14px;padding:0}
+.cell.mine{border-color:var(--ink-blue);border-width:1.5px}
+.cell.ok{background:var(--ok-soft);border-color:var(--ok);color:var(--ok)}
+.cell.bad{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.cell .dots{position:absolute;bottom:4px;left:0;right:0;display:flex;justify-content:center;gap:2px}
+.cell .dots i{width:5px;height:5px;border-radius:50%}
+.cell .msg{position:absolute;top:2px;right:3px;font-size:9px;color:var(--ink-blue);font-family:var(--body);font-weight:800}
+.cell .skull{position:absolute;top:2px;left:4px;font-size:9px;color:var(--bad);font-weight:800;font-family:var(--body)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin-top:4px}
+.legend span{display:inline-flex;gap:5px;align-items:center}
+.legend i{width:12px;height:12px;border-radius:4px;border:1px solid var(--line);display:inline-block}
+
+/* ranking */
+.group{background:var(--ink);color:var(--bg);border-radius:var(--r);padding:16px;display:grid;gap:8px;margin-bottom:14px}
+.group h2{font-size:22px}
+.group .bar{background:rgba(127,127,127,.35);height:12px}
+.group .bar>i{background:var(--fire)}
+.marks{display:flex;justify-content:space-between;font-size:11px;opacity:.75}
+.rank{display:grid;gap:8px}
+.row{display:grid;grid-template-columns:28px auto 1fr auto;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px}
+.row.me{border-color:var(--ink-blue)}
+.row .pos{font-family:var(--display);font-weight:800;font-size:20px;color:var(--muted);text-align:center}
+.row .nm{font-weight:700}
+.row .sub{font-size:12px;color:var(--muted)}
+.row .xp{font-family:var(--display);font-weight:800;font-size:20px;text-align:right}
+.row .xp small{display:block;font-family:var(--body);font-size:11px;color:var(--fire);font-weight:700}
+.badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.badge{font-size:11px;border-radius:999px;padding:3px 8px;background:var(--surface-2);color:var(--muted);font-weight:700}
+.badge.got{background:var(--ink-blue-soft);color:var(--ink-blue)}
+.rules{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;margin-top:14px;font-size:13px}
+.rules table{width:100%;border-collapse:collapse}
+.rules td{padding:5px 0;border-bottom:1px solid var(--line)}
+.rules td:last-child{text-align:right;font-family:var(--mono);font-weight:700;white-space:nowrap}
+
+/* mural */
+.feed{display:grid;gap:8px}
+.ev{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:start;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:10px 12px;font-size:14px}
+.ev .t{font-size:11px;color:var(--muted);white-space:nowrap}
+.ev button.link{border:0;background:none;padding:0;color:var(--ink-blue);font-weight:700;text-decoration:underline}
+
+/* folha da questão */
+.scrim{position:fixed;inset:0;background:rgba(10,14,25,.5);z-index:20;display:flex;align-items:flex-end;justify-content:center}
+.sheet{background:var(--bg);width:100%;max-width:640px;max-height:92vh;overflow:auto;border-radius:20px 20px 0 0;padding:18px max(16px,env(safe-area-inset-right,0px)) calc(20px + env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px));display:grid;gap:14px}
+@media (min-width:700px){.scrim{align-items:center}.sheet{border-radius:20px}}
+.sh-top{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.sh-top h2{font-size:30px;font-weight:800}
+.x{border:1px solid var(--line);background:var(--surface);border-radius:10px;width:38px;height:38px;font-size:18px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.bubbles{display:flex;gap:10px;justify-content:center;margin:6px 0 12px}
+.bub{width:52px;height:38px;border-radius:50%;border:2px solid var(--ink);background:transparent;font-family:var(--mono);font-weight:700;font-size:16px}
+.bub[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.bub.right{background:var(--ok);border-color:var(--ok);color:#fff}
+.bub.wrong{background:var(--bad);border-color:var(--bad);color:#fff}
+.result{border-radius:12px;padding:12px 14px;font-weight:700;display:flex;justify-content:space-between;gap:10px;align-items:center}
+.result.ok{background:var(--ok-soft);color:var(--ok)}
+.result.bad{background:var(--bad-soft);color:var(--bad)}
+.friends{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.fr{display:inline-flex;gap:6px;align-items:center;font-size:13px;background:var(--surface-2);border-radius:999px;padding:3px 10px 3px 3px}
+.fr b.okc{color:var(--ok)} .fr b.badc{color:var(--bad)}
+.chat{display:grid;gap:10px}
+.m{display:grid;grid-template-columns:auto 1fr;gap:8px}
+.m .bubble{background:var(--surface-2);border-radius:4px 14px 14px 14px;padding:8px 12px;min-width:0}
+.m.mine .bubble{background:var(--ink-blue-soft)}
+.m .head{font-size:12px;color:var(--muted);display:flex;gap:8px;align-items:center;justify-content:space-between}
+.m .txt{white-space:pre-wrap;word-wrap:break-word;overflow-wrap:anywhere}
+.fire-btn{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:2px 8px;font-size:12px;color:var(--muted);font-weight:700;display:inline-flex;gap:3px;align-items:center}
+.fire-btn[aria-pressed="true"]{color:var(--fire);border-color:var(--fire);background:var(--fire-soft)}
+.compose{display:flex;gap:8px;align-items:flex-end}
+.compose textarea{flex:1;min-width:0;resize:none;border:1px solid var(--line);border-radius:12px;padding:10px;background:var(--surface);color:var(--ink);font:inherit;min-height:44px;max-height:140px}
+.locked{display:flex;gap:10px;align-items:center;color:var(--muted);font-size:14px}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(20px + env(safe-area-inset-bottom,0px));background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-weight:700;z-index:40;font-size:14px;max-width:calc(100% - 32px)}
+@media (prefers-reduced-motion:no-preference){.toast{animation:pop .25s ease-out}@keyframes pop{from{transform:translate(-50%,10px);opacity:0}}}
+.empty{color:var(--muted);text-align:center;padding:20px;font-size:14px}
+.loading{color:var(--muted);font-size:13px;margin:8px 0}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <div class="hero">
+    <span class="eyebrow">Apostas Edcley · Matemática e Natureza</span>
+    <h1>Maratona <em>790</em></h1>
+    <p class="muted">Carregando o placar do grupo…</p>
+  </div>
+</div>
+
+<script>
+(function(){
+const SB="https://kdasxpchqxungnbmnhdt.supabase.co", KEY="sb_publishable_u0bGVimPuWyP57XpGcObWg_oQX_utoh";
+const N_MAT=309, TOTAL=790;
+const PEOPLE=[
+  {id:"sofia",name:"Sofia",color:"#e0457b",m:[1,45],n:[310,378]},
+  {id:"luana",name:"Luana",color:"#7a4fd8",m:[46,89],n:[379,447]},
+  {id:"belle",name:"Belle",color:"#1f8fd6",m:[90,133],n:[448,516]},
+  {id:"belloca",name:"Belloca",color:"#0f9d84",m:[134,177],n:[517,585]},
+  {id:"lara",name:"Lara",color:"#d97a0f",m:[178,221],n:[586,654]},
+  {id:"luca",name:"Luca",color:"#3b5bdb",m:[222,265],n:[655,722]},
+  {id:"val",name:"Val",color:"#c23b2e",m:[266,309],n:[723,790]},
+];
+const P=Object.fromEntries(PEOPLE.map(p=>[p.id,p]));
+const ENEM=new Date("2026-11-15T13:30:00-03:00");
+const DAY_MIN=5, DAY_GOAL=20, MSG_CAP=10;
+const LEVELS=[[0,"Vestibulanda"],[100,"Caderno aberto"],[250,"Marca-texto"],[450,"Resumista"],[700,"Simuladeira"],[1000,"Gabaritando"],[1400,"Veterana do cartão"],[1900,"Nota 900"],[2500,"Lenda do ENEM"]];
+const TZ="America/Fortaleza";
+const FLAME='<svg class="flame" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.5 2c.8 3.2-.9 5-2.5 6.9C8.4 10.7 6.5 12.6 6.5 15.5a5.5 5.5 0 0 0 11 0c0-2.4-1.2-4.2-2.4-5.6.1 1.8-.6 3-1.8 3.5.5-4-.5-8.3-.8-11.4z"/></svg>';
+
+const area=q=>q<=N_MAT?"Matemática":"Natureza";
+const ownerOf=q=>PEOPLE.find(p=>(q>=p.m[0]&&q<=p.m[1])||(q>=p.n[0]&&q<=p.n[1]));
+const inRange=(p,q)=>(q>=p.m[0]&&q<=p.m[1])||(q>=p.n[0]&&q<=p.n[1]);
+const dayKey=t=>new Date(t).toLocaleDateString("en-CA",{timeZone:TZ});
+const hourOf=t=>+new Date(t).toLocaleString("en-US",{timeZone:TZ,hour:"2-digit",hour12:false})%24;
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const LS={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+
+let players={}, msgs=[], auth=(()=>{try{return JSON.parse(LS.get("m790_auth")||"null")}catch(e){return null}})(), me=auth&&auth.p, loaded={p:false,m:false}, offline=false;
+let view="grade", filter="faixa", openQ=null, pending=null, pickFor=null, stale=false;
+const app=document.getElementById("app");
+
+async function hashPin(pid,pin){
+  const s="m790:"+pid+":"+pin;
+  try{const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
+  catch(e){let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))|0;return "x"+h}
+}
+
+/* ---------- regras de pontuação, derivadas dos dados ---------- */
+function stats(){
+  const per={}, byQ={};
+  for(const p of PEOPLE){
+    const a=(players[p.id]&&players[p.id].answers)||{};
+    for(const [q,v] of Object.entries(a)){ (byQ[q]=byQ[q]||[]).push({p:p.id,...v}); }
+  }
+  const hard=new Set();
+  for(const [q,arr] of Object.entries(byQ)){ if(arr.length>=3 && arr.filter(x=>!x.ok).length/arr.length>0.5) hard.add(+q); }
+  const msgBy={}, fireRecv={};
+  for(const m of msgs){ (msgBy[m.p]=msgBy[m.p]||[]).push(m); const f=Object.values(m.fires||{}).filter(Boolean).length; fireRecv[m.p]=(fireRecv[m.p]||0)+f; }
+  const today=dayKey(Date.now()), yest=dayKey(Date.now()-864e5);
+  for(const p of PEOPLE){
+    const a=(players[p.id]&&players[p.id].answers)||{};
+    const list=Object.entries(a).map(([q,v])=>({q:+q,...v})).sort((x,y)=>x.t-y.t);
+    let xp=0, okN=0, help=0, hardOk=0, run=0, best=0, early=false, late=false;
+    const days={};
+    for(const r of list){
+      let g=r.ok?10:3; if(r.ok)okN++;
+      if(!inRange(p,r.q)){g+=5;help++}
+      if(r.ok&&hard.has(r.q)){g+=10;hardOk++}
+      xp+=g; run=r.ok?run+1:0; best=Math.max(best,run);
+      const d=dayKey(r.t); days[d]=(days[d]||0)+1;
+      const h=hourOf(r.t); if(h<7&&h>=4)early=true; if(h>=23||h<2)late=true;
+    }
+    for(const n of Object.values(days)) if(n>=DAY_GOAL) xp+=20;
+    const mine=msgBy[p.id]||[]; const md={};
+    for(const m of mine){const d=dayKey(m.t); md[d]=(md[d]||0)+1; if(md[d]<=MSG_CAP) xp+=2;}
+    xp+=3*(fireRecv[p.id]||0);
+    // foguinho: dias seguidos com pelo menos DAY_MIN questões
+    let streak=0, state="off", cur=new Date();
+    const has=d=>(days[d]||0)>=DAY_MIN;
+    if(has(today)){state="on"} else if(has(yest)){state="risk"; cur=new Date(Date.now()-864e5)}
+    if(state!=="off"){ let t=cur.getTime(); while(has(dayKey(t))){streak++; t-=864e5;} }
+    const ownTotal=(p.m[1]-p.m[0]+1)+(p.n[1]-p.n[0]+1);
+    const ownDone=list.filter(r=>inRange(p,r.q)).length;
+    let lvl=0; for(let i=0;i<LEVELS.length;i++) if(xp>=LEVELS[i][0]) lvl=i;
+    const next=LEVELS[lvl+1]; const prog=next?(xp-LEVELS[lvl][0])/(next[0]-LEVELS[lvl][0]):1;
+    const ach=[
+      ["Primeira questão",list.length>=1],["Centena",list.length>=100],["10 certas seguidas",best>=10],
+      ["Faixa completa",ownDone>=ownTotal],["Mão amiga",help>=10],["Debatedora",mine.length>=10],
+      ["Fogo de 3 dias",streak>=3],["Caça-caveira",hardOk>=1],["Madrugadora",early],["Coruja",late]
+    ];
+    per[p.id]={xp,done:list.length,okN,acc:list.length?Math.round(okN/list.length*100):0,today:days[today]||0,streak,state,lvl,lvlName:LEVELS[lvl][1],next,prog,ownDone,ownTotal,help,ach,joined:!!players[p.id]};
+  }
+  return {per,byQ,hard};
+}
+
+/* ---------- dados (Supabase) ---------- */
+const H={apikey:KEY,Authorization:"Bearer "+KEY};
+async function get(path){const r=await fetch(SB+"/rest/v1/"+path,{headers:H});if(!r.ok)throw new Error(r.status);return r.json()}
+async function rpc(fn,body){const r=await fetch(SB+"/rest/v1/rpc/"+fn,{method:"POST",headers:{...H,"Content-Type":"application/json"},body:JSON.stringify(body)});
+  const txt=await r.text(); if(!r.ok){let m="";try{m=JSON.parse(txt).message}catch(e){} const err=new Error(m||String(r.status)); err.code=m; throw err} return txt?JSON.parse(txt):null}
+let busy=false;
+async function refresh(){
+  if(busy)return; busy=true;
+  try{
+    const [pl,an,ms,fi]=await Promise.all([get("players?select=id,joined"),get("answers?select=player,q,l,ok,right_l,t&limit=10000"),get("msgs?select=id,q,p,text,t&order=t.asc&limit=5000"),get("fires?select=msg_id,p&limit=20000")]);
+    const np={}; for(const p of pl) np[p.id]={joined:p.joined,answers:{}};
+    for(const r of an){ if(np[r.player]) np[r.player].answers[r.q]={l:r.l,ok:r.ok,right:r.right_l,t:r.t}; }
+    const fm={}; for(const f of fi){(fm[f.msg_id]=fm[f.msg_id]||{})[f.p]=true}
+    players=np; msgs=ms.map(m=>({...m,fires:fm[m.id]||{}}));
+    loaded.p=loaded.m=true; offline=false; stale=false;
+  }catch(e){ offline=true; }
+  busy=false; if(!pickFor) render();
+}
+function start(){
+  refresh();
+  setInterval(()=>{ if(document.visibilityState==="visible") refresh(); },8000);
+  document.addEventListener("visibilitychange",()=>{ if(document.visibilityState==="visible") refresh(); });
+}
+
+/* ---------- render ---------- */
+function countdown(){
+  const ms=ENEM-Date.now(); if(ms<=0) return "Dia de prova. Boa sorte!";
+  const d=Math.floor(ms/864e5), h=Math.floor(ms%864e5/36e5);
+  return `faltam <b class="mono">${d}d ${h}h</b> para o 2º dia do ENEM`;
+}
+function av(p,cls=""){return `<span class="av ${cls}" style="background:${p.color}" aria-hidden="true">${p.name[0]}</span>`}
+
+function render(){
+  const focus=document.activeElement&&document.activeElement.id; const draft=document.getElementById("msg-in");
+  const draftVal=draft?draft.value:null;
+  const S=stats();
+  let h="";
+  if(offline) h+=`<div class="notice"><b>Sem conexão com o placar.</b> Confira sua internet. O app tenta de novo sozinho a cada poucos segundos.</div>`;
+  if(!me||!players[me]||!auth){ h+=loginView(S); }
+  else { h+=topView(S)+tabs()+(view==="grade"?gradeView(S):view==="ranking"?rankView(S):feedView(S)); }
+  app.innerHTML=h;
+  if(openQ) renderSheet(S);
+  else{const old=document.querySelector(".scrim"); if(old) old.remove();}
+  if(focus){const el=document.getElementById(focus); if(el) el.focus();}
+  const d2=document.getElementById("msg-in"); if(d2&&draftVal!==null) d2.value=draftVal;
+}
+
+function loginView(S){
+  if(pickFor){
+    const p=P[pickFor], exists=!!players[p.id];
+    return `<div class="hero"><span class="eyebrow">Maratona 790</span><h1>Oi, ${esc(p.name)}</h1></div>
+    <form class="pinbox" id="pinform">
+      ${av(p,"lg")}
+      <p>${exists?"Digite seu PIN de 4 números.":"Primeira vez? Crie um PIN de 4 números. Ele impede que alguém marque questão no seu nome sem querer."}</p>
+      <div class="pin">${[0,1,2,3].map(i=>`<input id="pin${i}" inputmode="numeric" maxlength="1" autocomplete="off" aria-label="Dígito ${i+1}">`).join("")}</div>
+      <div class="err" id="pinerr"></div>
+      <div style="display:flex;gap:8px"><button type="button" class="btn ghost" id="back">Voltar</button><button class="btn" id="pinok">${exists?"Entrar":"Criar e entrar"}</button></div>
+    </form>`;
+  }
+  const loadingNote=!offline&&!loaded.p?`<p class="loading">${stale?"O placar ainda não respondeu. Pode estar sem conexão.":"Carregando quem já entrou…"}</p>`:"";
+  return `<div class="hero"><span class="eyebrow">Apostas Edcley · Matemática e Natureza</span><h1>Maratona <em>790</em></h1>
+  <span class="count">${FLAME} ${countdown()}</span></div>
+  <h2 style="font-size:18px;margin-bottom:10px">Quem é você?</h2>${loadingNote}
+  <div class="pick">${PEOPLE.map(p=>{const s=S.per[p.id];return `<button class="who" data-pick="${p.id}">${av(p)}<span class="nm">${p.name}</span>
+  <span class="meta">${s.joined?`${s.xp} XP · ${s.done} questões · ${FLAME} ${s.streak}`:"ainda não entrou"}</span>
+  <span class="meta mono">${p.m[0]}–${p.m[1]} · ${p.n[0]}–${p.n[1]}</span></button>`}).join("")}</div>`;
+}
+
+function topView(S){
+  const p=P[me], s=S.per[me];
+  const lbl={on:"dias",risk:"em risco",off:"apagado"}[s.state];
+  return `<div class="top">${av(p,"lg")}
+  <div style="min-width:0"><div class="nm">${p.name}</div>
+   <div class="lvl">Nível ${s.lvl+1} · ${s.lvlName} · <b class="mono">${s.xp} XP</b>${s.next?` · faltam ${s.next[0]-s.xp} para ${s.next[1]}`:""}</div>
+   <div class="bar" role="progressbar" aria-valuenow="${Math.round(s.prog*100)}" aria-valuemin="0" aria-valuemax="100"><i style="width:${Math.round(s.prog*100)}%"></i></div></div>
+  <div class="streak ${s.state}" title="Dias seguidos com pelo menos ${DAY_MIN} questões">${FLAME}<b>${s.streak}</b><small>${lbl}</small></div></div>
+  <div class="today"><span>Hoje: <b class="mono">${s.today}/${DAY_GOAL}</b></span>
+   <div class="bar"><i style="width:${Math.min(100,s.today/DAY_GOAL*100)}%"></i></div>
+   <span class="muted">${s.today>=DAY_GOAL?"meta batida, +20 XP":s.today>=DAY_MIN?"foguinho garantido hoje":`faltam ${DAY_MIN-s.today} para acender o fogo`}</span></div>
+  <div class="today"><span class="count">${FLAME} ${countdown()}</span><button class="chip" id="logout">Trocar de pessoa</button></div>`;
+}
+function tabs(){
+  const t=[["grade","Questões"],["ranking","Ranking"],["mural","Mural"]];
+  return `<div class="tabs" role="tablist">${t.map(([k,l])=>`<button role="tab" data-view="${k}" aria-selected="${view===k}">${l}</button>`).join("")}</div>`;
+}
+function cellHtml(q,S){
+  const mine=players[me].answers&&players[me].answers[q];
+  const others=(S.byQ[q]||[]).filter(x=>x.p!==me);
+  const mc=msgs.filter(m=>m.q===q).length;
+  const cls=["cell"]; if(inRange(P[me],q))cls.push("mine"); if(mine)cls.push(mine.ok?"ok":"bad");
+  return `<button class="${cls.join(" ")}" data-q="${q}" aria-label="Questão ${q}${mine?(mine.ok?", acertou":", errou"):""}${mc?`, ${mc} mensagens`:""}">${S.hard.has(q)?'<span class="skull" title="Questão difícil: XP em dobro">!!</span>':""}${mc?`<span class="msg">${mc}</span>`:""}${q}<span class="dots">${others.slice(0,7).map(o=>`<i style="background:${P[o.p].color}"></i>`).join("")}</span></button>`;
+}
+function gradeView(S){
+  const p=P[me];
+  const F=[["faixa","Minha faixa"],["mat","Matemática"],["nat","Natureza"],["todas","Todas"],["abertas","Não fiz"],["conversa","Com conversa"],["dificeis","Difíceis"]];
+  let h=`<div class="chips">${F.map(([k,l])=>`<button class="chip" data-f="${k}" aria-pressed="${filter===k}">${l}</button>`).join("")}</div>`;
+  const all=[...Array(TOTAL)].map((_,i)=>i+1);
+  const ans=players[me].answers||{};
+  const pickSec=(title,qs,note)=>qs.length?`<div class="sec"><h3>${title}</h3><span class="muted mono" style="font-size:12px">${note||qs.length+" questões"}</span></div><div class="grid">${qs.map(q=>cellHtml(q,S)).join("")}</div>`:"";
+  if(filter==="faixa"){
+    const rm=all.filter(q=>q>=p.m[0]&&q<=p.m[1]), rn=all.filter(q=>q>=p.n[0]&&q<=p.n[1]);
+    h+=pickSec(`Matemática ${p.m[0]}–${p.m[1]}`,rm,`${rm.filter(q=>ans[q]).length}/${rm.length} feitas`);
+    h+=pickSec(`Natureza ${p.n[0]}–${p.n[1]}`,rn,`${rn.filter(q=>ans[q]).length}/${rn.length} feitas`);
+  }else{
+    let qs=all;
+    if(filter==="mat")qs=all.filter(q=>q<=N_MAT); if(filter==="nat")qs=all.filter(q=>q>N_MAT);
+    if(filter==="abertas")qs=all.filter(q=>!ans[q]);
+    if(filter==="conversa"){const s=new Set(msgs.map(m=>m.q));qs=all.filter(q=>s.has(q));}
+    if(filter==="dificeis")qs=all.filter(q=>S.hard.has(q));
+    if(!qs.length) h+=`<div class="empty">${filter==="conversa"?"Nenhuma conversa ainda. Responda uma questão e comente lá dentro.":filter==="dificeis"?"Nenhuma questão difícil ainda. Ela aparece quando 3 ou mais responderam e a maioria errou.":"Nada por aqui."}</div>`;
+    else for(const o of PEOPLE){const part=qs.filter(q=>inRange(o,q)); h+=pickSec(`Faixa da ${o.name}`,part);}
+  }
+  h+=`<div class="legend"><span><i style="background:var(--ok-soft);border-color:var(--ok)"></i>acertou</span><span><i style="background:var(--bad-soft);border-color:var(--bad)"></i>errou</span><span><i style="border-color:var(--ink-blue)"></i>sua faixa</span><span>bolinhas: amigas que fizeram</span><span>número azul: mensagens</span><span><b style="color:var(--bad)">!!</b> difícil (XP em dobro)</span></div>`;
+  return h;
+}
+function rankView(S){
+  const done=new Set(); for(const q of Object.keys(S.byQ)) done.add(+q);
+  const tot=Object.values(S.per).reduce((a,s)=>a+s.done,0);
+  const order=[...PEOPLE].sort((a,b)=>S.per[b.id].xp-S.per[a.id].xp);
+  let h=`<div class="group"><span class="eyebrow" style="color:inherit;opacity:.7">Meta do grupo</span><h2><span class="mono">${done.size}</span> de 790 questões feitas por alguém</h2>
+  <div class="bar"><i style="width:${done.size/TOTAL*100}%"></i></div><div class="marks"><span>0</span><span>25%</span><span>50%</span><span>75%</span><span>790</span></div>
+  <span style="font-size:13px;opacity:.8">${tot} respostas no total · ${PEOPLE.filter(p=>S.per[p.id].state==="on").length} com o fogo aceso hoje</span></div>`;
+  h+=`<div class="rank">${order.map((p,i)=>{const s=S.per[p.id];return `<div class="row ${p.id===me?"me":""}"><span class="pos">${i+1}</span>${av(p)}
+  <div style="min-width:0"><div class="nm">${p.name} <span class="sub">· ${s.lvlName}</span></div>
+  <div class="sub">${s.done} feitas · ${s.acc}% de acerto · faixa ${s.ownDone}/${s.ownTotal}${s.help?` · ${s.help} de amigas`:""}</div>
+  <div class="badges">${s.ach.filter(a=>a[1]).map(a=>`<span class="badge got">${a[0]}</span>`).join("")||'<span class="badge">sem conquistas ainda</span>'}</div></div>
+  <div class="xp mono">${s.xp}<small>${FLAME} ${s.streak}</small></div></div>`}).join("")}</div>`;
+  const s=S.per[me];
+  h+=`<div class="rules"><h3 style="font-size:15px;margin-bottom:6px">Como ganhar XP</h3><table>
+  <tr><td>Acertar uma questão</td><td>+10</td></tr><tr><td>Errar (tentou, conta também)</td><td>+3</td></tr>
+  <tr><td>Questão da faixa de outra amiga</td><td>+5</td></tr><tr><td>Acertar questão difícil (!!)</td><td>+10</td></tr>
+  <tr><td>Bater a meta de ${DAY_GOAL} questões no dia</td><td>+20</td></tr><tr><td>Mensagem no chat (até ${MSG_CAP} por dia)</td><td>+2</td></tr>
+  <tr><td>Cada foguinho que sua mensagem recebe</td><td>+3</td></tr></table>
+  <p class="muted" style="margin:8px 0 0">O foguinho conta dias seguidos com pelo menos ${DAY_MIN} questões, de qualquer faixa. Só vale a primeira resposta de cada questão.</p>
+  <h3 style="font-size:15px;margin:12px 0 6px">Suas conquistas</h3><div class="badges">${s.ach.map(a=>`<span class="badge ${a[1]?"got":""}">${a[0]}</span>`).join("")}</div></div>`;
+  return h;
+}
+function ago(t){const m=Math.round((Date.now()-t)/6e4); if(m<1)return "agora"; if(m<60)return m+" min"; const h=Math.round(m/60); if(h<24)return h+" h"; return Math.round(h/24)+" d";}
+function feedView(S){
+  const ev=[];
+  for(const [q,arr] of Object.entries(S.byQ)) for(const a of arr) ev.push({t:a.t,p:a.p,html:`${a.ok?"acertou":"errou"} a <button class="link" data-q="${q}">${q}</button>${!inRange(P[a.p],+q)?` da faixa da ${ownerOf(+q).name}`:""}${a.ok&&S.hard.has(+q)?" — questão difícil!":""}`});
+  for(const m of msgs) ev.push({t:m.t,p:m.p,html:`comentou na <button class="link" data-q="${m.q}">${m.q}</button>`});
+  ev.sort((a,b)=>b.t-a.t);
+  if(!ev.length) return `<div class="empty">Ainda não tem nada no mural. A primeira questão de alguém aparece aqui.</div>`;
+  return `<div class="feed">${ev.slice(0,60).map(e=>`<div class="ev">${av(P[e.p],"sm")}<div><b>${P[e.p].name}</b> ${e.html}</div><span class="t">${ago(e.t)}</span></div>`).join("")}</div>`;
+}
+
+function renderSheet(S){
+  const q=openQ, own=ownerOf(q), mine=players[me].answers&&players[me].answers[q];
+  const others=(S.byQ[q]||[]).filter(x=>x.p!==me);
+  const th=msgs.filter(m=>m.q===q);
+  let h=`<div class="sheet" role="dialog" aria-modal="true" aria-label="Questão ${q}"><div class="sh-top"><div><span class="eyebrow">${area(q)} · faixa da ${own.name}${S.hard.has(q)?" · difícil":""}</span><h2>Questão <span class="mono">${q}</span></h2></div><button class="x" id="close" aria-label="Fechar">×</button></div>`;
+  if(!mine){
+    h+=`<div class="card"><p style="margin:0 0 4px;font-weight:700">Qual letra você marcou?</p><p class="muted" style="margin:0;font-size:13px">A primeira resposta é a que vale. ${!inRange(P[me],q)?"Essa é de outra faixa: +5 XP extra.":""}</p>
+    <div class="bubbles">${"ABCDE".split("").map(l=>`<button class="bub" data-l="${l}" aria-pressed="${pending===l}">${l}</button>`).join("")}</div>
+    <button class="btn" id="confirm" style="width:100%" ${pending?"":"disabled"}>Conferir no gabarito</button></div>`;
+    h+=`<div class="card locked">${FLAME}<span>${others.length?`${others.length} amiga${others.length>1?"s":""} já fez essa. `:""}${th.length?`${th.length} mensagem${th.length>1?"s":""} esperando.`:"Sem conversa ainda."} Responda para ver o gabarito e liberar o chat.</span></div>`;
+  }else{
+    const right=mine.right;
+    h+=`<div class="card"><div class="bubbles">${"ABCDE".split("").map(l=>`<span class="bub ${l===right?"right":l===mine.l?"wrong":""}" style="display:grid;place-items:center">${l}</span>`).join("")}</div>
+    <div class="result ${mine.ok?"ok":"bad"}"><span>${mine.ok?"Acertou":"Errou. O gabarito é "+right}</span><span class="mono">você marcou ${mine.l}</span></div>
+    ${others.length?`<div class="friends">${others.map(o=>`<span class="fr">${av(P[o.p],"sm")}${P[o.p].name} <b class="${o.ok?"okc":"badc"}">${o.l}</b></span>`).join("")}</div>`:`<p class="muted" style="margin:10px 0 0;font-size:13px">Você foi a primeira do grupo a fazer essa.</p>`}</div>`;
+    h+=`<div class="card"><h3 style="font-size:16px;margin-bottom:10px">Conversa da questão ${q}</h3><div class="chat">${th.length?th.map(m=>{const pp=P[m.p]||{name:"?",color:"#888"};const nf=Object.values(m.fires||{}).filter(Boolean).length;const mineF=!!(m.fires&&m.fires[me]);
+      return `<div class="m ${m.p===me?"mine":""}">${av(pp,"sm")}<div class="bubble"><div class="head"><span><b>${pp.name}</b> · ${ago(m.t)}</span>${m.p!==me?`<button class="fire-btn" data-fire="${esc(m.id)}" aria-pressed="${mineF}" aria-label="Dar foguinho">${FLAME} ${nf||""}</button>`:(nf?`<span class="fire-btn" aria-label="${nf} foguinhos">${FLAME} ${nf}</span>`:"")}</div><div class="txt">${esc(m.text)}</div></div></div>`}).join(""):`<p class="muted" style="margin:0">Ninguém comentou ainda. Deixe sua observação: como resolveu, onde travou, uma dica.</p>`}</div>
+    <form class="compose" id="compose" style="margin-top:12px"><textarea id="msg-in" rows="2" maxlength="1200" placeholder="Sua observação sobre a questão ${q}…" aria-label="Mensagem"></textarea><button class="btn" id="send">Enviar</button></form></div>`;
+  }
+  h+=`</div>`;
+  let scrim=document.querySelector(".scrim");
+  const keepScroll=scrim?scrim.querySelector(".sheet").scrollTop:0;
+  const draft=document.getElementById("msg-in"); const dv=draft?draft.value:"";
+  if(!scrim){scrim=document.createElement("div");scrim.className="scrim";document.body.appendChild(scrim);}
+  scrim.innerHTML=h; scrim.querySelector(".sheet").scrollTop=keepScroll;
+  const d2=document.getElementById("msg-in"); if(d2&&dv) d2.value=dv;
+}
+
+function toast(t){const el=document.createElement("div");el.className="toast";el.textContent=t;document.body.appendChild(el);setTimeout(()=>el.remove(),2600)}
+
+/* ---------- ações ---------- */
+document.addEventListener("click",async e=>{
+  const t=e.target.closest("button,[data-q]"); if(!t)return;
+  if(t.dataset.pick){pickFor=t.dataset.pick;render();setTimeout(()=>{const i=document.getElementById("pin0");i&&i.focus()},0);return}
+  if(t.id==="back"){pickFor=null;render();return}
+  if(t.id==="logout"){LS.del("m790_auth");auth=null;me=null;pickFor=null;render();return}
+  if(t.dataset.view){view=t.dataset.view;render();return}
+  if(t.dataset.f){filter=t.dataset.f;render();return}
+  if(t.dataset.q&&!t.closest(".sheet")){openQ=+t.dataset.q;pending=null;render();return}
+  if(t.id==="close"){openQ=null;render();return}
+  if(t.dataset.l){pending=t.dataset.l;renderSheet(stats());return}
+  if(t.id==="confirm"&&pending&&openQ){
+    const q=openQ,l=pending; t.disabled=true;
+    try{
+      const r=await rpc("m790_answer",{pid:me,pin_hash:auth.h,qn:q,letter:l});
+      players[me].answers[q]={l:r.l,ok:r.ok,right:r.right,t:Date.now()};
+      const extra=!inRange(P[me],q)?5:0;
+      toast(r.ok?`Acertou! +${10+extra} XP`:`Errou, era ${r.right}. +${3+extra} XP`);
+      pending=null; render(); refresh();
+    }catch(err){toast(err.code==="pin"?"Seu PIN mudou. Saia e entre de novo.":"Não salvou. Confira a internet e tente de novo.");t.disabled=false}
+    return;
+  }
+  if(t.dataset.fire){
+    const m=msgs.find(x=>x.id===t.dataset.fire); if(!m)return;
+    const on=!(m.fires&&m.fires[me]);
+    try{const r=await rpc("m790_fire",{pid:me,pin_hash:auth.h,mid:m.id}); if(r)toast(`Foguinho para ${P[m.p].name}`); refresh();}catch(err){toast("Não deu para enviar o foguinho.")}
+    return;
+  }
+});
+document.addEventListener("click",e=>{if(e.target.classList&&e.target.classList.contains("scrim")){openQ=null;render()}});
+document.addEventListener("keydown",e=>{if(e.key==="Escape"&&openQ){openQ=null;render()}});
+document.addEventListener("input",e=>{
+  const m=e.target.id&&e.target.id.match(/^pin(\d)$/);
+  if(m){e.target.value=e.target.value.replace(/\D/g,"").slice(0,1); if(e.target.value&&+m[1]<3)document.getElementById("pin"+(+m[1]+1)).focus();}
+});
+document.addEventListener("keydown",e=>{
+  const m=e.target.id&&e.target.id.match(/^pin(\d)$/);
+  if(m&&e.key==="Backspace"&&!e.target.value&&+m[1]>0)document.getElementById("pin"+(+m[1]-1)).focus();
+  if(e.target.id==="msg-in"&&e.key==="Enter"&&!e.shiftKey){e.preventDefault();document.getElementById("compose").requestSubmit();}
+});
+document.addEventListener("submit",async e=>{
+  e.preventDefault();
+  if(e.target.id==="pinform"){
+    const pin=[0,1,2,3].map(i=>document.getElementById("pin"+i).value).join(""); const err=document.getElementById("pinerr");
+    if(!/^\d{4}$/.test(pin)){err.textContent="Digite os 4 números.";return}
+    const hsh=await hashPin(pickFor,pin);
+    try{
+      const r=await rpc("m790_login",{pid:pickFor,pin_hash:hsh});
+      if(r==="wrong"){err.textContent="PIN errado. Tente de novo.";return}
+      if(r!=="ok"&&r!=="created"){err.textContent="Não deu para entrar.";return}
+      me=pickFor; auth={p:me,h:hsh}; LS.set("m790_auth",JSON.stringify(auth)); pickFor=null; view="grade"; filter="faixa";
+      if(!players[me]) players[me]={joined:Date.now(),answers:{}};
+      render(); refresh();
+      toast(r==="ok"?`Bem-vinda de volta, ${P[me].name}`:`Tudo pronto, ${P[me].name}. Bora!`);
+    }catch(x){err.textContent="Sem conexão com o placar. Confira a internet."}
+    return;
+  }
+  if(e.target.id==="compose"){
+    const ta=document.getElementById("msg-in"); const text=ta.value.trim(); if(!text||!openQ)return;
+    const btn=document.getElementById("send"); btn.disabled=true;
+    try{await rpc("m790_post",{pid:me,pin_hash:auth.h,qn:openQ,body:text}); ta.value=""; await refresh();}
+    catch(err){toast("Mensagem não enviada. Tente de novo.")}
+    btn.disabled=false; return;
+  }
+});
+setInterval(()=>{ if(!openQ && document.visibilityState==="visible" && !document.activeElement.matches("input,textarea")) render(); },60000);
+render(); start();
+})();
+</script>
+</body>
+</html>
